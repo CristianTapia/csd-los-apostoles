@@ -1,18 +1,31 @@
 export default function Home() {
   return (
     <div>
-      <header className="bg-green-900">
-        <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+      <header className="bg-green-900 flex items-center justify-between">
+        <div>LOGO</div>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8 gap-8">
           <div className="flex gap-4 items-center flex-col sm:flex-row">
-            <a
-              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Botón inicial
+            <a className="cursor-pointer flex hover:text-[#000000]" target="_blank" rel="noopener noreferrer">
+              EL CLUB
+            </a>
+          </div>
+          <div className="flex gap-4 items-center flex-col sm:flex-row">
+            <a className="cursor-pointer flex hover:text-[#000000]" target="_blank" rel="noopener noreferrer">
+              SOCIOS
+            </a>
+          </div>
+          <div className="flex gap-4 items-center flex-col sm:flex-row">
+            <a className="cursor-pointer flex hover:text-[#000000]" target="_blank" rel="noopener noreferrer">
+              TIENDA
+            </a>
+          </div>
+          <div className="flex gap-4 items-center flex-col sm:flex-row">
+            <a className="cursor-pointer flex hover:text-[#000000]" target="_blank" rel="noopener noreferrer">
+              PLANTEL
             </a>
           </div>
         </nav>
+        <div>REDES</div>
       </header>
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">Main</main>
