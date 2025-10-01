@@ -1,8 +1,9 @@
 export default function Home() {
   return (
-    <div>
-      <header className="bg-green-900 flex items-center justify-between">
+    <div className="flex flex-col">
+      <header className="bg-green-900 flex items-center justify-between min-w-dvh w-full overflow-x-hidden">
         <div>LOGO</div>
+
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8 gap-8">
           <div className="flex gap-4 items-center flex-col sm:flex-row">
             <a className="cursor-pointer flex hover:text-[#000000]" target="_blank" rel="noopener noreferrer">
@@ -28,9 +29,9 @@ export default function Home() {
         <div>REDES</div>
       </header>
 
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">Main</main>
+      <main className="flex flex-col items-center">Main</main>
 
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">Footer</footer>
+      <footer className="flex items-center justify-center">Footer</footer>
     </div>
   );
 }
