@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import { siInstagram, siTiktok, siWhatsapp, siYoutube } from "simple-icons";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
-  const NAV = ["EL CLUB", "SOCIOS", "TIENDA", "PLANTEL"];
+  const nav = ["EL CLUB", "SOCIOS", "TIENDA", "PLANTEL"];
   const [open, setOpen] = useState(false);
 
   return (
@@ -17,7 +19,7 @@ export default function Page() {
 
             {/* NAV desktop */}
             <nav className="hidden md:flex items-center gap-8">
-              {NAV.map((label) => (
+              {nav.map((label) => (
                 <Link key={label} href="#" className="hover:text-black/90">
                   {label}
                 </Link>
@@ -25,7 +27,20 @@ export default function Page() {
             </nav>
 
             {/* REDES desktop */}
-            <div className="hidden md:flex">REDES</div>
+            <div className="hidden md:flex gap-4">
+              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siWhatsapp.path} />
+              </svg>
+              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siInstagram.path} />
+              </svg>
+              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siTiktok.path} />
+              </svg>
+              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siYoutube.path} />
+              </svg>
+            </div>
 
             {/* Hamburguesa mobile */}
             <button
@@ -35,6 +50,8 @@ export default function Page() {
               aria-controls="mobile-menu"
             >
               {/* ícono simple */}
+              <Menu />
+
               <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor">
                 {open ? (
                   <path strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
@@ -53,7 +70,7 @@ export default function Page() {
             }`}
           >
             <nav className="flex flex-col py-2 gap-1">
-              {NAV.map((label) => (
+              {nav.map((label) => (
                 <Link
                   key={label}
                   href="#"
@@ -63,7 +80,7 @@ export default function Page() {
                   {label}
                 </Link>
               ))}
-              <div className="pt-2 px-2 text-sm/none opacity-90">REDES</div>
+              {/* <div className="pt-2 px-2 text-sm/none opacity-90">REDES</div> */}
             </nav>
           </div>
         </div>
