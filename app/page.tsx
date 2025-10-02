@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { siInstagram, siTiktok, siWhatsapp, siYoutube } from "simple-icons";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
@@ -45,20 +45,24 @@ export default function Page() {
             {/* Hamburguesa mobile */}
             <button
               className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded hover:bg-black/10"
-              onClick={() => setOpen((s) => !s)}
+              onClick={() => setOpen((prev) => !prev)}
               aria-expanded={open}
               aria-controls="mobile-menu"
             >
-              {/* ícono simple */}
-              <Menu />
+              <span className="sr-only">{open ? "Cerrar menú" : "Abrir menú"}</span>
 
-              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor">
-                {open ? (
-                  <path strokeWidth="2" strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeWidth="2" strokeLinecap="round" d="M4 7h16M4 12h16M4 17h16" />
-                )}
-              </svg>
+              <span className="relative h-6 w-6">
+                <Menu
+                  className={`absolute inset-0 h-6 w-6 transition-opacity duration-150 ${
+                    open ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                <X
+                  className={`absolute inset-0 h-6 w-6 transition-opacity duration-150 ${
+                    open ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              </span>
             </button>
           </div>
 
