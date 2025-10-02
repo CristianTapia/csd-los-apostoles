@@ -69,7 +69,7 @@ export default function Page() {
           {/* Panel mobile (colapsable) */}
           <div
             id="mobile-menu"
-            className={`md:hidden overflow-hidden transition-[max-height] duration-300 ${
+            className={`md:hidden overflow-hidden transition-[max-height] duration-600 ${
               open ? "max-h-64" : "max-h-0"
             }`}
           >
@@ -84,7 +84,6 @@ export default function Page() {
                   {label}
                 </Link>
               ))}
-              {/* <div className="pt-2 px-2 text-sm/none opacity-90">REDES</div> */}
             </nav>
           </div>
         </div>
