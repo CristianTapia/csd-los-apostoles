@@ -9,35 +9,12 @@ export default function Page() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh flex flex-col bg-neutral-950 text-white">
+    <div className="min-h-dvh flex flex-col bg-[var(--background)] text-white">
       {/* HEADER */}
-      <header className="w-full bg-amber-700 text-white shadow-md">
+      <header className="w-full bg-[var(--background)] text-[var(--font-main)]">
         <div className="mx-auto max-w-7xl px-4">
           {/* Barra superior */}
           <div className="h-16 flex items-center justify-between">
-            {/* Hamburguesa mobile */}
-            <button
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded hover:bg-black/10"
-              onClick={() => setOpen((prev) => !prev)}
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-            >
-              <span className="sr-only">{open ? "Cerrar menú" : "Abrir menú"}</span>
-
-              <span className="relative h-6 w-6">
-                <Menu
-                  className={`absolute inset-0 h-6 w-6 transition-opacity duration-150 ${
-                    open ? "opacity-0" : "opacity-100"
-                  }`}
-                />
-                <X
-                  className={`absolute inset-0 h-6 w-6 transition-opacity duration-150 ${
-                    open ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-              </span>
-            </button>
-
             {/* Logo */}
             <div className="font-bold">LOGO</div>
 
@@ -51,20 +28,30 @@ export default function Page() {
             </nav>
 
             {/* Redes sociales desktop */}
-            <div className="flex md:flex gap-4">
-              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
-                <path d={siWhatsapp.path} />
-              </svg>
-              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
-                <path d={siInstagram.path} />
-              </svg>
-              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
-                <path d={siTiktok.path} />
-              </svg>
-              <svg className="h-6 w-6 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
-                <path d={siYoutube.path} />
-              </svg>
-            </div>
+            <div className="flex md:flex gap-4 font-bold">CSD Los Apóstoles akfjhas askd</div>
+
+            {/* Hamburguesa mobile */}
+            <button
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded hover:bg-black/10"
+              onClick={() => setOpen((prev) => !prev)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+            >
+              <span className="sr-only">{open ? "Cerrar menú" : "Abrir menú"}</span>
+
+              <span className="relative h-6 w-6">
+                <Menu
+                  className={`absolute inset-0 w-5 transition-opacity duration-150 ${
+                    open ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                <X
+                  className={`absolute inset-0 h-6 w-6 transition-opacity duration-150 ${
+                    open ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              </span>
+            </button>
           </div>
 
           {/* Panel mobile (colapsable) */}
@@ -103,4 +90,20 @@ export default function Page() {
       </footer>
     </div>
   );
+}
+
+// RRSS
+{
+  /* <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siWhatsapp.path} />
+              </svg>
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siInstagram.path} />
+              </svg>
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siTiktok.path} />
+              </svg>
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siYoutube.path} />
+              </svg> */
 }
