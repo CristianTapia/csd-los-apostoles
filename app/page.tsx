@@ -80,7 +80,7 @@ export default function Page() {
 
       {/* MAIN */}
       <main className="flex-1 w-full">
-        <div className="px-4 md:px-0">
+        <div className="px-4 md:px-0 md:">
           <div className="relative w-full h-[320px] md:h-[480px] lg:h-[560px] overflow-hidden rounded-xl">
             <Image src="/images/inicio.jpg" alt="Portada del club" fill priority className="object-cover" />
             <div className="absolute inset-0 bg-black/40" />
@@ -159,30 +159,30 @@ export default function Page() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-background-light dark:bg-background-dark mt-8 px-4 py-8 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex justify-center gap-6 mb-4">
-          <a className="text-[#111813] dark:text-white" data-alt="Facebook icon" href="#">
+      <footer className="bg-background dark:bg-background-dark mt-8 px-4 py-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-center gap-6 mb-4 text-font-main">
+          <a className="dark:text-white" data-alt="Facebook icon" href="#">
             <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
               <path d={siWhatsapp.path} />
             </svg>
           </a>
-          <a className="text-[#111813] dark:text-white" data-alt="Instagram icon" href="#">
+          <a className="dark:text-white" data-alt="Instagram icon" href="#">
             <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
               <path d={siInstagram.path} />
             </svg>
           </a>
-          <a className="text-[#111813] dark:text-white" data-alt="Instagram icon" href="#">
+          <a className="dark:text-white" data-alt="Instagram icon" href="#">
             <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
               <path d={siTiktok.path} />
             </svg>
           </a>
-          <a className="text-[#111813] dark:text-white" data-alt="Instagram icon" href="#">
+          <a className="dark:text-white" data-alt="Instagram icon" href="#">
             <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
               <path d={siYoutube.path} />
             </svg>
           </a>
         </div>
-        <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-center text-sm text-font-secondary dark:text-gray-400">
           <p>csdlosapostoles@gmail.com</p>
           <p>© 2025 Club de Fútbol Amateur. Todos los derechos reservados.</p>
         </div>
