@@ -3,15 +3,16 @@ import { useState } from "react";
 import { siInstagram, siTiktok, siWhatsapp, siYoutube } from "simple-icons";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Page() {
   const nav = ["EL CLUB", "SOCIOS", "TIENDA", "PLANTEL"];
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh flex flex-col bg-[var(--background)] text-white">
+    <div className="min-h-dvh flex flex-col bg-background">
       {/* HEADER */}
-      <header className="w-full bg-[var(--background)] text-[var(--font-main)]">
+      <header className="w-full bg-background text-font-main">
         <div className="mx-auto max-w-7xl px-4">
           {/* Barra superior */}
           <div className="h-16 flex items-center justify-between">
@@ -27,8 +28,8 @@ export default function Page() {
               ))}
             </nav>
 
-            {/* Redes sociales desktop */}
-            <div className="flex md:flex gap-4 font-bold">CSD Los Apóstoles akfjhas askd</div>
+            {/* Nombre desktop */}
+            <div className="flex text-center md:hidden gap-4 font-bold">CSD Los Apóstoles</div>
 
             {/* Hamburguesa mobile */}
             <button
@@ -79,8 +80,20 @@ export default function Page() {
 
       {/* MAIN */}
       <main className="flex-1 w-full">
-        <div className="mx-auto max-w-7xl px-4 py-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-8">
-          Main
+        <div className="px-4 md:px-0">
+          <div className="relative w-full h-[320px] md:h-[480px] lg:h-[560px] overflow-hidden rounded-xl">
+            <Image src="/images/inicio.jpg" alt="Portada del club" fill priority className="object-cover" />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 text-center px-4">
+              <h2 className="text-4xl font-black leading-tight tracking-[-0.033em] min-[480px]:text-5xl">
+                ¡Bienvenidos a Nuestro Club!
+              </h2>
+              <p className="text-sm min-[480px]:text-base mb-4">Pasión, esfuerzo y comunidad.</p>
+              <button className="flex px-4 p-2 min-w-[84px] max-w-[480px] items-center justify-center rounded-lg bg-button-main text-font-main text-sm font-bold min-[480px]:h-12 min-[480px]:px-5 min-[480px]:text-base">
+                <span className="truncate">Hazte Socio</span>
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 
