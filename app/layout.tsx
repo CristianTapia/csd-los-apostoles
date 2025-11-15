@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lexend } from "next/font/google";
+import { Lexend } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Nabvar from "./ui/Navbar";
+import { siInstagram, siTiktok, siWhatsapp, siYoutube } from "simple-icons/icons";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -29,7 +21,50 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} ${lexend.variable} antialiased`}>{children}</body>
+      <body className={`${lexend.className} ${lexend.variable} antialiased`}>
+        <div className="min-h-dvh flex flex-col bg-background">
+          {/* HEADER */}
+          <header className="w-full bg-background text-font-main">
+            <div className="mx-auto max-w-7xl px-4">
+              <Nabvar />
+            </div>
+          </header>
+
+          {/* MAIN */}
+          <main className="flex-1 w-full">
+            <div className="px-4 md:px-0 md:">{children}</div>
+          </main>
+        </div>
+        {/* FOOTER */}
+        <footer className="bg-background dark:bg-background-dark mt-8 px-4 py-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-center gap-6 mb-4 text-font-main">
+            <a className="dark:text-white" data-alt="Facebook icon" href="#">
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siWhatsapp.path} />
+              </svg>
+            </a>
+            <a className="dark:text-white" data-alt="Instagram icon" href="#">
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siInstagram.path} />
+              </svg>
+            </a>
+            <a className="dark:text-white" data-alt="Instagram icon" href="#">
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siTiktok.path} />
+              </svg>
+            </a>
+            <a className="dark:text-white" data-alt="Instagram icon" href="#">
+              <svg className="h-5 w-5 hover:text-black/90" viewBox="0 0 24 24" fill="currentColor">
+                <path d={siYoutube.path} />
+              </svg>
+            </a>
+          </div>
+          <div className="text-center text-sm text-font-secondary dark:text-gray-400">
+            <p>csdlosapostoles@gmail.com</p>
+            <p>© 2025 Club de Fútbol Amateur. Todos los derechos reservados.</p>
+          </div>
+        </footer>
+      </body>
     </html>
   );
 }
