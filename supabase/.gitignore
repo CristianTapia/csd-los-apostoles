@@ -45,3 +45,13 @@ next-env.d.ts
 # 
 tmp-edge-profile*/
 tmp-responsive/
+
+# debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# supabase local/temp
+supabase/.temp/
