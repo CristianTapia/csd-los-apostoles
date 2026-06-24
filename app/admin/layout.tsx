@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -15,14 +16,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect("/auth/login?next=/admin");
   }
 
-  if (access.configured && access.userId && !access.isSuperAdmin && !access.activeClub) {
+  if (access.configured && access.userId && !access.canAccessAdmin) {
     return (
       <AdminShell>
         <div className="mx-auto max-w-5xl space-y-5">
-          <PageHeader title="Acceso pendiente" description="Tu usuario existe, pero todavia no tiene un club asignado." />
+          <PageHeader title="Acceso denegado" description="Tu usuario no tiene un rol administrativo." />
           <Card>
             <p className="text-sm text-font-secondary">
-              Pide a un superadmin que asigne un rol tenant_owner, tenant_admin o member al club correspondiente.
+              Pide a un superadmin que asigne el rol superadmin, tenant_owner o tenant_admin. El rol member no puede
+              acceder al dashboard.
             </p>
           </Card>
         </div>
@@ -33,6 +35,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <AdminShell showSuperAdminLinks={access.isSuperAdmin}>
       <div className="mx-auto max-w-6xl space-y-5">
+        <div className="flex justify-end">
+          {access.userId ? <LogoutButton /> : null}
+        </div>
         {!access.configured ? (
           <Card className="flex flex-col gap-2 border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950">
             <div>

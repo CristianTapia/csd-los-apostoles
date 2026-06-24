@@ -15,6 +15,10 @@ export type ActiveClub = {
   status: string;
 };
 
+function hasAdminRole(roles: UserRoleAssignment[]) {
+  return roles.some((role) => role.club_id && CLUB_ADMIN_ROLES.includes(role.role));
+}
+
 export async function isSuperAdmin(userId?: string): Promise<boolean> {
   const roles = await getUserRoles(userId);
   return roles.some((role) => role.role === "superadmin" && role.club_id === null);
@@ -74,7 +78,7 @@ export async function requireClubRole(
 export async function getActiveClubForUser(userId?: string): Promise<ActiveClub | null> {
   const supabase = await getSupabaseServerClient();
   const roles = await getUserRoles(userId);
-  const clubRole = roles.find((role) => role.club_id);
+  const clubRole = roles.find((role) => role.club_id && CLUB_ADMIN_ROLES.includes(role.role));
 
   if (!supabase || !clubRole?.club_id) {
     return null;
@@ -99,6 +103,7 @@ export async function getAdminAccessContext() {
       roles: [] as UserRoleAssignment[],
       activeClub: null,
       isSuperAdmin: false,
+      canAccessAdmin: false,
     };
   }
 
@@ -111,12 +116,14 @@ export async function getAdminAccessContext() {
       roles: [] as UserRoleAssignment[],
       activeClub: null,
       isSuperAdmin: false,
+      canAccessAdmin: false,
     };
   }
 
   const roles = await getUserRoles(user.id);
   const superAdmin = roles.some((role) => role.role === "superadmin" && role.club_id === null);
-  const activeClub = await getActiveClubForUser(user.id);
+  const canAccessAdmin = superAdmin || hasAdminRole(roles);
+  const activeClub = canAccessAdmin ? await getActiveClubForUser(user.id) : null;
 
   return {
     configured: true,
@@ -124,5 +131,6 @@ export async function getAdminAccessContext() {
     roles,
     activeClub,
     isSuperAdmin: superAdmin,
+    canAccessAdmin,
   };
 }
