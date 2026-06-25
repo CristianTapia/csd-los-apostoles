@@ -47,12 +47,6 @@ export async function loginAction(_prevState: ActionResult, formData: FormData):
     };
   }
 
-  console.log("[loginAction] Login success", {
-    email: parsed.data.email,
-    hasUser: Boolean(data.user),
-    hasSession: Boolean(data.session),
-  });
-
   redirect(parsed.data.next?.startsWith("/") ? parsed.data.next : "/admin");
 }
 
