@@ -3,33 +3,39 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, CalendarDays, FileText, Home, Menu, Settings, Users, X } from "lucide-react";
+import { Building2, CalendarDays, FileText, Home, Menu, Settings, Shield, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 type AdminNavProps = {
-  showSuperAdminLinks?: boolean;
+  variant?: "admin" | "dashboard";
 };
 
-const baseItems = [
-  { href: "/admin", label: "Inicio", icon: Home },
-  { href: "/admin/configuracion", label: "Configuracion", icon: Settings },
-  { href: "/admin/partidos", label: "Partidos", icon: CalendarDays },
-  { href: "/admin/socios", label: "Socios", icon: Users },
-  { href: "/admin/transparencia", label: "Transparencia", icon: FileText },
+const adminItems = [
+  { href: "/admin", label: "Inicio", icon: Shield },
+  { href: "/admin/clubes", label: "Clubes", icon: Building2 },
 ];
 
-const superAdminItems = [{ href: "/admin/clubes", label: "Clubes", icon: Building2 }];
+const dashboardItems = [
+  { href: "/dashboard", label: "Inicio", icon: Home },
+  { href: "/dashboard/configuracion", label: "Configuracion", icon: Settings },
+  { href: "/dashboard/partidos", label: "Partidos", icon: CalendarDays },
+  { href: "/dashboard/socios", label: "Socios", icon: Users },
+  { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText },
+  { href: "/dashboard/plantel", label: "Plantel", icon: Building2 },
+];
 
-export function AdminNav({ showSuperAdminLinks = false }: AdminNavProps) {
+export function AdminNav({ variant = "dashboard" }: AdminNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const items = showSuperAdminLinks ? [...baseItems, ...superAdminItems] : baseItems;
+  const items = variant === "admin" ? adminItems : dashboardItems;
+  const homeHref = variant === "admin" ? "/admin" : "/dashboard";
+  const title = variant === "admin" ? "Superadmin" : "Dashboard";
 
   return (
     <div className="border-b border-black/10 bg-white dark:border-white/10 dark:bg-neutral-950 lg:min-h-dvh lg:w-72 lg:border-b-0 lg:border-r">
       <div className="flex h-16 items-center justify-between px-4 lg:h-auto lg:flex-col lg:items-start lg:gap-6 lg:px-5 lg:py-6">
-        <Link href="/admin" className="font-bold text-font-main dark:text-white">
-          Admin Club
+        <Link href={homeHref} className="font-bold text-font-main dark:text-white">
+          {title}
         </Link>
         <button
           type="button"

@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/admin/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-export default function AdminMembersPage() {
+export default function DashboardMembersPage() {
   return (
     <div className="space-y-5">
       <PageHeader title="Socios" description="Base para miembros, estados y cuotas mensuales." />

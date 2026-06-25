@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/admin/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-export default function AdminSettingsPage() {
+export default function DashboardSettingsPage() {
   return (
     <div className="space-y-5">
       <PageHeader title="Configuracion" description="Identidad publica, colores, logo, portada y redes del club." />

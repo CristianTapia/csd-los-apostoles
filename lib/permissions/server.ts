@@ -15,7 +15,7 @@ export type ActiveClub = {
   status: string;
 };
 
-function hasAdminRole(roles: UserRoleAssignment[]) {
+function hasTenantAdminRole(roles: UserRoleAssignment[]) {
   return roles.some((role) => role.club_id && CLUB_ADMIN_ROLES.includes(role.role));
 }
 
@@ -104,6 +104,7 @@ export async function getAdminAccessContext() {
       activeClub: null,
       isSuperAdmin: false,
       canAccessAdmin: false,
+      canAccessDashboard: false,
     };
   }
 
@@ -117,13 +118,14 @@ export async function getAdminAccessContext() {
       activeClub: null,
       isSuperAdmin: false,
       canAccessAdmin: false,
+      canAccessDashboard: false,
     };
   }
 
   const roles = await getUserRoles(user.id);
   const superAdmin = roles.some((role) => role.role === "superadmin" && role.club_id === null);
-  const canAccessAdmin = superAdmin || hasAdminRole(roles);
-  const activeClub = canAccessAdmin ? await getActiveClubForUser(user.id) : null;
+  const canAccessDashboard = hasTenantAdminRole(roles);
+  const activeClub = canAccessDashboard ? await getActiveClubForUser(user.id) : null;
 
   return {
     configured: true,
@@ -131,6 +133,7 @@ export async function getAdminAccessContext() {
     roles,
     activeClub,
     isSuperAdmin: superAdmin,
-    canAccessAdmin,
+    canAccessAdmin: superAdmin,
+    canAccessDashboard,
   };
 }

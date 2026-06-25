@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/admin/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
-export default function AdminTransparencyPage() {
+export default function DashboardTransparencyPage() {
   return (
     <div className="space-y-5">
       <PageHeader title="Transparencia" description="Espacio futuro para documentos, reportes y comunicados publicos." />
