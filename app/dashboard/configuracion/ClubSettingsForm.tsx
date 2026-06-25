@@ -22,6 +22,7 @@ const initialState: ActionResult = {
 
 export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
   const [state, formAction, isPending] = useActionState(updateClubSettingsAction, initialState);
+  const fieldErrors = state.ok ? undefined : state.fieldErrors;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -41,7 +42,7 @@ export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
           label="Nombre público"
           name="public_name"
           defaultValue={initialValues.public_name}
-          error={state.fieldErrors?.public_name?.[0]}
+          error={fieldErrors?.public_name?.[0]}
         />
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -49,21 +50,21 @@ export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
             label="Color principal"
             name="primary_color"
             defaultValue={initialValues.primary_color}
-            error={state.fieldErrors?.primary_color?.[0]}
+            error={fieldErrors?.primary_color?.[0]}
           />
 
           <ColorField
             label="Color secundario"
             name="secondary_color"
             defaultValue={initialValues.secondary_color}
-            error={state.fieldErrors?.secondary_color?.[0]}
+            error={fieldErrors?.secondary_color?.[0]}
           />
 
           <ColorField
             label="Color acento"
             name="accent_color"
             defaultValue={initialValues.accent_color}
-            error={state.fieldErrors?.accent_color?.[0]}
+            error={fieldErrors?.accent_color?.[0]}
           />
         </div>
 
@@ -73,7 +74,7 @@ export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
           type="url"
           defaultValue={initialValues.logo_url ?? ""}
           placeholder="https://..."
-          error={state.fieldErrors?.logo_url?.[0]}
+          error={fieldErrors?.logo_url?.[0]}
         />
 
         <FormField
@@ -82,7 +83,7 @@ export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
           type="url"
           defaultValue={initialValues.cover_image_url ?? ""}
           placeholder="https://..."
-          error={state.fieldErrors?.cover_image_url?.[0]}
+          error={fieldErrors?.cover_image_url?.[0]}
         />
       </div>
 
