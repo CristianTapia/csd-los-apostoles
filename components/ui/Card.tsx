@@ -1,19 +1,12 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { cn } from "@/lib/utils/cn";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
 };
 
-export function Card({ children, className, ...props }: CardProps) {
+export function Card({ children, className = "", ...props }: CardProps) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border border-black/10 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-neutral-950",
-        className,
-      )}
-      {...props}
-    >
+    <div className={["rounded-2xl border border-gray-200 bg-white p-5 shadow-sm", className].join(" ")} {...props}>
       {children}
     </div>
   );

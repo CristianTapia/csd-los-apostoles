@@ -1,6 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { FormField } from "@/components/forms/FormField";
+import { SubmitButton } from "@/components/forms/SubmitButton";
 import { updateClubSettingsAction } from "@/server/actions/update-club-settings";
 import type { ActionResult } from "@/server/actions/types";
 
@@ -21,25 +24,26 @@ const initialState: ActionResult = {
 };
 
 export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
-  const [state, formAction, isPending] = useActionState(updateClubSettingsAction, initialState);
+  const [state, formAction] = useActionState(updateClubSettingsAction, initialState);
+
   const fieldErrors = state.ok ? undefined : state.fieldErrors;
+
+  useEffect(() => {
+    if (!state.message) return;
+
+    if (state.ok) {
+      toast.success(state.message);
+      return;
+    }
+
+    toast.error(state.message);
+  }, [state]);
 
   return (
     <form action={formAction} className="space-y-6">
-      {state.message ? (
-        <div
-          className={[
-            "rounded-xl border p-4 text-sm",
-            state.ok ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700",
-          ].join(" ")}
-        >
-          {state.message}
-        </div>
-      ) : null}
-
       <div className="grid gap-4">
         <FormField
-          label="Nombre público"
+          label="Nombre del club"
           name="public_name"
           defaultValue={initialValues.public_name}
           error={fieldErrors?.public_name?.[0]}
@@ -87,44 +91,8 @@ export function ClubSettingsForm({ initialValues }: ClubSettingsFormProps) {
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full rounded-xl bg-gray-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {isPending ? "Guardando..." : "Guardar configuración"}
-      </button>
+      <SubmitButton pendingText="Guardando...">Guardar configuración</SubmitButton>
     </form>
-  );
-}
-
-function FormField({
-  label,
-  name,
-  type = "text",
-  defaultValue,
-  placeholder,
-  error,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  defaultValue: string;
-  placeholder?: string;
-  error?: string;
-}) {
-  return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-      <input
-        name={name}
-        type={type}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gray-400 focus:ring-4 focus:ring-gray-100"
-      />
-      {error ? <span className="text-xs text-red-600">{error}</span> : null}
-    </label>
   );
 }
 
@@ -139,6 +107,10 @@ function ColorField({
   defaultValue: string;
   error?: string;
 }) {
+  const [value, setValue] = useState(defaultValue);
+
+  const colorPickerValue = isHexColor(value) ? value : "#000000";
+
   return (
     <label className="grid gap-2">
       <span className="text-sm font-medium text-gray-700">{label}</span>
@@ -146,21 +118,27 @@ function ColorField({
       <div className="flex gap-2">
         <input
           type="color"
-          value={defaultValue}
-          readOnly
-          tabIndex={-1}
-          className="h-11 w-14 rounded-xl border border-gray-200 bg-white p-1"
+          value={colorPickerValue}
+          onChange={(event) => setValue(event.target.value)}
+          className="h-11 w-14 cursor-pointer rounded-xl border border-gray-200 bg-white p-1"
+          aria-label={`Seleccionar ${label.toLowerCase()}`}
         />
 
         <input
           name={name}
           type="text"
-          defaultValue={defaultValue}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
           className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-gray-400 focus:ring-4 focus:ring-gray-100"
+          placeholder="#111827"
         />
       </div>
 
       {error ? <span className="text-xs text-red-600">{error}</span> : null}
     </label>
   );
+}
+
+function isHexColor(value: string) {
+  return /^#[0-9A-Fa-f]{6}$/.test(value);
 }
