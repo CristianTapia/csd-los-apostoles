@@ -4,13 +4,31 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { getAdminAccessContext } from "@/lib/permissions/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const access = await getAdminAccessContext();
+
+  if (!access.configured) {
+    return (
+      <main className="min-h-dvh bg-background px-4 py-8 text-font-main dark:bg-black dark:text-white">
+        <div className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-xl items-center">
+          <Card className="w-full border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
+            <PageHeader
+              title="Admin bloqueado"
+              description="Supabase no esta configurado. El dashboard no puede renderizarse sin autenticacion y permisos."
+            />
+            <p className="mt-4 text-sm text-red-900 dark:text-red-100">
+              Crea un archivo .env.local en la raiz del proyecto con NEXT_PUBLIC_SUPABASE_URL y
+              NEXT_PUBLIC_SUPABASE_ANON_KEY. Luego reinicia el servidor de desarrollo.
+            </p>
+          </Card>
+        </div>
+      </main>
+    );
+  }
 
   if (access.configured && !access.userId) {
     redirect("/auth/login?next=/admin");
@@ -38,16 +56,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <div className="flex justify-end">
           {access.userId ? <LogoutButton /> : null}
         </div>
-        {!access.configured ? (
-          <Card className="flex flex-col gap-2 border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950">
-            <div>
-              <StatusBadge tone="warning">Configuracion pendiente</StatusBadge>
-            </div>
-            <p className="text-sm text-amber-900 dark:text-amber-100">
-              Agrega NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY para activar auth, permisos y datos reales.
-            </p>
-          </Card>
-        ) : null}
         {children}
       </div>
     </AdminShell>

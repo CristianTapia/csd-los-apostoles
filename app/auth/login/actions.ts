@@ -26,14 +26,32 @@ export async function loginAction(_prevState: ActionResult, formData: FormData):
     return { ok: false, message: "Supabase no esta configurado." };
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
 
   if (error) {
-    return { ok: false, message: "Email o password incorrectos." };
+    console.error("[loginAction] Supabase login error", {
+      email: parsed.data.email,
+      message: error.message,
+      status: error.status,
+      code: error.code,
+      name: error.name,
+    });
+
+    return {
+      ok: false,
+      message:
+        process.env.NODE_ENV === "development" ? `Error Supabase: ${error.message}` : "Email o password incorrectos.",
+    };
   }
+
+  console.log("[loginAction] Login success", {
+    email: parsed.data.email,
+    hasUser: Boolean(data.user),
+    hasSession: Boolean(data.session),
+  });
 
   redirect(parsed.data.next?.startsWith("/") ? parsed.data.next : "/admin");
 }
