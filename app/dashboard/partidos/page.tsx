@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CLUB_EVENT_STATUS_LABELS, CLUB_MATCH_SIDE_LABELS } from "@/server/schemas/calendar-event";
 import { getDashboardMatchEvents, type DashboardMatchEvent } from "@/server/queries/get-dashboard-match-events";
+import { MatchQuickUpdateForm } from "./MatchQuickUpdateForm";
+import { MatchKitColorForm } from "./MatchKitColorForm";
 
 export default async function DashboardPartidosPage() {
   const result = await getDashboardMatchEvents();
@@ -104,6 +106,8 @@ function MatchCard({ clubName, match }: { clubName: string; match: DashboardMatc
             {match.is_public ? "Público" : "Privado"}
           </div>
         </div>
+        <MatchKitColorForm match={match} />
+        <MatchQuickUpdateForm match={match} />
       </div>
     </Card>
   );

@@ -41,18 +41,47 @@ export const CLUB_MATCH_SIDE_LABELS: Record<ClubMatchSide, string> = {
   neutral: "Neutral",
 };
 
-const optionalText = z
-  .string()
-  .trim()
-  .transform((value) => (value.length > 0 ? value : null));
+const optionalText = z.preprocess((value) => {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+
+  return trimmed.length > 0 ? trimmed : null;
+}, z.string().nullable());
 
 const optionalUrl = z
-  .string()
-  .trim()
-  .transform((value) => (value.length > 0 ? value : null))
+  .preprocess((value) => {
+    if (typeof value !== "string") return null;
+
+    const trimmed = value.trim();
+
+    return trimmed.length > 0 ? trimmed : null;
+  }, z.string().nullable())
   .refine((value) => value === null || isValidHttpUrl(value), {
     message: "Ingresa un link válido que empiece con http:// o https://.",
   });
+
+const optionalScore = z.preprocess((value) => {
+  if (value === "" || value === null || value === undefined) {
+    return null;
+  }
+
+  return Number(value);
+}, z.number().int().min(0, "El marcador no puede ser negativo.").nullable());
+
+const optionalHexColor = z.preprocess(
+  (value) => {
+    if (value === "" || value === null || value === undefined) {
+      return null;
+    }
+
+    return value;
+  },
+  z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Selecciona un color válido.")
+    .nullable(),
+);
 
 export const createMatchEventSchema = z
   .object({
@@ -93,6 +122,54 @@ export const createMatchEventSchema = z
   });
 
 export type CreateMatchEventInput = z.infer<typeof createMatchEventSchema>;
+
+export const updateMatchDetailsSchema = z
+  .object({
+    event_id: z.string().uuid(),
+    status: z.enum(CLUB_EVENT_STATUSES),
+
+    club_score: optionalScore,
+    opponent_score: optionalScore,
+  })
+  .superRefine((value, ctx) => {
+    const hasClubScore = value.club_score !== null;
+    const hasOpponentScore = value.opponent_score !== null;
+
+    if (hasClubScore !== hasOpponentScore) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["club_score"],
+        message: "Debes ingresar ambos marcadores o dejar ambos vacíos.",
+      });
+    }
+
+    if (value.status === "completed" && (value.club_score === null || value.opponent_score === null)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["club_score"],
+        message: "Un partido finalizado debe tener marcador.",
+      });
+    }
+
+    if (value.status !== "completed" && (value.club_score !== null || value.opponent_score !== null)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["club_score"],
+        message: "Solo un partido finalizado puede tener marcador.",
+      });
+    }
+  });
+
+export type UpdateMatchDetailsInput = z.infer<typeof updateMatchDetailsSchema>;
+
+export const updateMatchKitColorsSchema = z.object({
+  event_id: z.string().uuid(),
+
+  club_kit_color: optionalHexColor,
+  opponent_kit_color: optionalHexColor,
+});
+
+export type UpdateMatchKitColorsInput = z.infer<typeof updateMatchKitColorsSchema>;
 
 function isValidHttpUrl(value: string) {
   try {
