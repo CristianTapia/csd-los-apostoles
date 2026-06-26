@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, CalendarDays, FileText, Home, Menu, Settings, Users, X } from "lucide-react";
+import { Building2, CalendarDays, FileText, Home, Menu, Settings, Trophy, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const dashboardItems = [
   { href: "/dashboard", label: "Inicio", icon: Home },
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
   { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
+  { href: "/dashboard/partidos", label: "Partidos", icon: Trophy },
   { href: "/dashboard/socios", label: "Socios", icon: Users },
   { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText },
   { href: "/dashboard/plantel", label: "Plantel", icon: Building2 },
