@@ -3,31 +3,34 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Menu, Settings, Shield, X } from "lucide-react";
+import { Building2, CalendarDays, FileText, Home, Menu, Settings, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
-const adminItems = [
-  { href: "/admin", label: "Inicio", icon: Shield },
-  { href: "/admin/clubes", label: "Clubes", icon: Building2 },
-  { href: "/admin/modulos", label: "Módulos", icon: Settings },
+const dashboardItems = [
+  { href: "/dashboard", label: "Inicio", icon: Home },
+  { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
+  { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
+  { href: "/dashboard/socios", label: "Socios", icon: Users },
+  { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText },
+  { href: "/dashboard/plantel", label: "Plantel", icon: Building2 },
 ];
 
-export function AdminNav() {
+export function DashboardNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
   return (
     <div className="border-b border-black/10 bg-white dark:border-white/10 dark:bg-neutral-950 lg:min-h-dvh lg:w-72 lg:border-b-0 lg:border-r">
       <div className="flex h-16 items-center justify-between px-4 lg:h-auto lg:flex-col lg:items-start lg:gap-6 lg:px-5 lg:py-6">
-        <Link href="/admin" className="font-bold text-font-main dark:text-white">
-          Superadmin
+        <Link href="/dashboard" className="font-bold text-font-main dark:text-white">
+          Dashboard
         </Link>
 
         <button
           type="button"
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-black/10 text-font-main dark:border-white/10 dark:text-white lg:hidden"
           aria-expanded={open}
-          aria-controls="admin-mobile-nav"
+          aria-controls="dashboard-mobile-nav"
           onClick={() => setOpen((current) => !current)}
         >
           <span className="sr-only">{open ? "Cerrar menú" : "Abrir menú"}</span>
@@ -36,13 +39,13 @@ export function AdminNav() {
       </div>
 
       <nav
-        id="admin-mobile-nav"
+        id="dashboard-mobile-nav"
         className={cn(
           "grid gap-1 overflow-hidden px-4 transition-[max-height] duration-200 lg:max-h-none lg:px-3 lg:pb-4",
           open ? "max-h-96 pb-4" : "max-h-0 lg:pb-4",
         )}
       >
-        {adminItems.map((item) => {
+        {dashboardItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
 

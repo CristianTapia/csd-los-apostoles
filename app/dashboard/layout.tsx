@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { AdminShell } from "@/components/admin/AdminShell";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { LogoutButton } from "@/components/admin/LogoutButton";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { PrivateShell } from "@/components/layouts/PrivateShell";
 import { Card } from "@/components/ui/Card";
 import { getAdminAccessContext } from "@/lib/permissions/server";
 
@@ -18,10 +19,11 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <Card className="w-full border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950">
             <PageHeader
               title="Dashboard bloqueado"
-              description="Supabase no esta configurado. El dashboard no puede renderizarse sin autenticacion y permisos."
+              description="Supabase no está configurado. El dashboard no puede renderizarse sin autenticación y permisos."
             />
+
             <p className="mt-4 text-sm text-red-900 dark:text-red-100">
-              Crea un archivo .env.local en la raiz del proyecto con NEXT_PUBLIC_SUPABASE_URL y
+              Crea un archivo .env.local en la raíz del proyecto con NEXT_PUBLIC_SUPABASE_URL y
               NEXT_PUBLIC_SUPABASE_ANON_KEY. Luego reinicia el servidor de desarrollo.
             </p>
           </Card>
@@ -36,9 +38,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   if (!access.canAccessDashboard) {
     return (
-      <AdminShell variant="dashboard">
+      <PrivateShell nav={<DashboardNav />}>
         <div className="mx-auto max-w-5xl space-y-5">
           <PageHeader title="Acceso denegado" description="Esta zona es solo para administradores del club." />
+
           <Card>
             <p className="text-sm text-font-secondary">
               Necesitas rol tenant_owner o tenant_admin. Los roles superadmin sin club y member no pueden acceder a
@@ -46,18 +49,19 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             </p>
           </Card>
         </div>
-      </AdminShell>
+      </PrivateShell>
     );
   }
 
   return (
-    <AdminShell variant="dashboard">
+    <PrivateShell nav={<DashboardNav />}>
       <div className="mx-auto max-w-6xl space-y-5">
         <div className="flex justify-end">
           <LogoutButton />
         </div>
+
         {children}
       </div>
-    </AdminShell>
+    </PrivateShell>
   );
 }

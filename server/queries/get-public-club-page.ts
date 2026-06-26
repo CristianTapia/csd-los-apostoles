@@ -83,7 +83,8 @@ export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<
     .from("club_modules")
     .select("module, label, sort_order")
     .eq("club_id", club.id)
-    .eq("is_enabled", true)
+    .eq("is_allowed", true)
+    // .eq("is_enabled", true)
     .order("sort_order", { ascending: true });
 
   if (modulesError) {
