@@ -1,7 +1,23 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/server/actions/types";
 
-type PublicClubPage = {
+export type PublicClubModuleKey =
+  | "transparencia"
+  | "plantel"
+  | "socios"
+  | "tienda"
+  | "actividades"
+  | "campeonatos"
+  | "calendario";
+
+export type PublicClubModule = {
+  module: PublicClubModuleKey;
+  label: string;
+  href: string;
+  sort_order: number;
+};
+
+export type PublicClubPage = {
   club: {
     id: string;
     name: string;
@@ -16,6 +32,7 @@ type PublicClubPage = {
     logo_url: string | null;
     cover_image_url: string | null;
   };
+  enabledModules: PublicClubModule[];
 };
 
 export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<PublicClubPage>> {
@@ -62,6 +79,27 @@ export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<
     };
   }
 
+  const { data: modules, error: modulesError } = await supabase
+    .from("club_modules")
+    .select("module, label, sort_order")
+    .eq("club_id", club.id)
+    .eq("is_enabled", true)
+    .order("sort_order", { ascending: true });
+
+  if (modulesError) {
+    return {
+      ok: false,
+      message: "No se pudo obtener la navegación pública del club.",
+    };
+  }
+
+  const enabledModules: PublicClubModule[] = (modules ?? []).map((item) => ({
+    module: item.module as PublicClubModuleKey,
+    label: item.label,
+    href: `/${club.slug}/${item.module}`,
+    sort_order: item.sort_order,
+  }));
+
   return {
     ok: true,
     data: {
@@ -74,6 +112,7 @@ export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<
         logo_url: settings?.logo_url ?? null,
         cover_image_url: settings?.cover_image_url ?? null,
       },
+      enabledModules,
     },
   };
 }

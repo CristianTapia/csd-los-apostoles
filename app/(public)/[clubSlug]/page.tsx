@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { getPublicClubPage } from "@/server/queries/get-public-club-page";
+import Link from "next/link";
+import { PublicClubNav } from "@/components/public/PublicClubNav";
 
 type ClubPublicPageProps = {
   params: Promise<{
@@ -23,7 +25,7 @@ export default async function ClubPublicPage({ params }: ClubPublicPageProps) {
     notFound();
   }
 
-  const { club, settings } = result.data;
+  const { club, settings, enabledModules } = result.data;
 
   const themeStyle: TenantThemeStyle = {
     "--tenant-primary": settings.primary_color,
@@ -42,6 +44,8 @@ export default async function ClubPublicPage({ params }: ClubPublicPageProps) {
         ) : (
           <div className="absolute inset-0 bg-[var(--tenant-primary)]" />
         )}
+
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-black/20" />
 
         <div className="relative mx-auto flex min-h-[520px] max-w-6xl flex-col justify-between px-5 py-6 sm:px-8 lg:px-10">
           <header className="flex items-center justify-between gap-4">
@@ -64,13 +68,13 @@ export default async function ClubPublicPage({ params }: ClubPublicPageProps) {
                 <p className="font-semibold text-white">{settings.public_name}</p>
               </div>
             </div>
-
-            <a
+            <PublicClubNav clubSlug={club.slug} modules={enabledModules} />
+            <Link
               href="/auth/login"
               className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
             >
               Ingresar
-            </a>
+            </Link>
           </header>
 
           <div className="max-w-3xl py-16">
@@ -85,38 +89,64 @@ export default async function ClubPublicPage({ params }: ClubPublicPageProps) {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={`/${club.slug}/transparencia`}
-                className="rounded-full bg-[var(--tenant-accent)] px-5 py-3 text-center text-sm font-semibold text-gray-950 transition hover:opacity-90"
-              >
-                Ver transparencia
-              </a>
+              {enabledModules.some((item) => item.module === "transparencia") ? (
+                <Link
+                  href={`/${club.slug}/transparencia`}
+                  className="rounded-full bg-[var(--tenant-accent)] px-5 py-3 text-center text-sm font-semibold text-gray-950 transition hover:opacity-90"
+                >
+                  Ver transparencia
+                </Link>
+              ) : null}
 
-              <a
-                href={`/${club.slug}/partidos`}
-                className="rounded-full border border-white/20 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Próximos partidos
-              </a>
+              {enabledModules.some((item) => item.module === "calendario") ? (
+                <Link
+                  href={`/${club.slug}/calendario`}
+                  className="rounded-full border border-white/20 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Ver calendario
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>
       </section>
 
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-10 sm:px-8 md:grid-cols-3 lg:px-10">
-        <PublicCard title="Partidos" description="Calendario y resultados del club." />
-        <PublicCard title="Plantel" description="Jugadores, cuerpo técnico y categorías." />
-        <PublicCard title="Socios" description="Información para socios y comunidad." />
+        {enabledModules.slice(0, 6).map((item) => (
+          <PublicCard
+            key={item.module}
+            href={item.href}
+            title={item.label}
+            description={getModuleDescription(item.module)}
+          />
+        ))}
       </section>
     </main>
   );
 }
 
-function PublicCard({ title, description }: { title: string; description: string }) {
+function PublicCard({ href, title, description }: { href: string; title: string; description: string }) {
   return (
-    <article className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+    <Link
+      href={href}
+      className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    >
       <h2 className="text-lg font-semibold text-gray-950">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-gray-500">{description}</p>
-    </article>
+    </Link>
   );
+}
+
+function getModuleDescription(module: string) {
+  const descriptions: Record<string, string> = {
+    transparencia: "Información pública, cuotas, ingresos y gastos del club.",
+    plantel: "Jugadores, cuerpo técnico y categorías del club.",
+    socios: "Información para socios, comunidad y beneficios.",
+    tienda: "Productos, camisetas, merchandising y aportes.",
+    actividades: "Rifas, campañas, platos únicos y eventos comunitarios.",
+    campeonatos: "Torneos, inscripciones, fixtures y bases.",
+    calendario: "Próximos partidos, resultados y actividades programadas.",
+  };
+
+  return descriptions[module] ?? "Información pública del club.";
 }
