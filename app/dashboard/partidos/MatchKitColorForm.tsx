@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateMatchKitColorsAction } from "@/server/actions/update-match-kit-colors";
 import type { DashboardMatchEvent } from "@/server/queries/get-dashboard-match-events";
@@ -22,6 +23,7 @@ const KIT_COLORS = [
 ];
 
 export function MatchKitColorForm({ match }: MatchKitColorFormProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function updateColors(input: { club_kit_color?: string; opponent_kit_color?: string }) {
@@ -38,6 +40,7 @@ export function MatchKitColorForm({ match }: MatchKitColorFormProps) {
       }
 
       toast.success(result.message ?? "Colores actualizados.");
+      router.refresh();
     });
   }
 

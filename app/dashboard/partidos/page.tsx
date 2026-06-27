@@ -1,10 +1,11 @@
+import type { CSSProperties } from "react";
 import { MatchEventForm } from "./MatchEventForm";
+import { MatchKitColorForm } from "./MatchKitColorForm";
+import { MatchQuickUpdateForm } from "./MatchQuickUpdateForm";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CLUB_EVENT_STATUS_LABELS, CLUB_MATCH_SIDE_LABELS } from "@/server/schemas/calendar-event";
 import { getDashboardMatchEvents, type DashboardMatchEvent } from "@/server/queries/get-dashboard-match-events";
-import { MatchQuickUpdateForm } from "./MatchQuickUpdateForm";
-import { MatchKitColorForm } from "./MatchKitColorForm";
 
 export default async function DashboardPartidosPage() {
   const result = await getDashboardMatchEvents();
@@ -63,7 +64,7 @@ function MatchCard({ clubName, match }: { clubName: string; match: DashboardMatc
 
   return (
     <Card>
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-font-secondary">
@@ -71,7 +72,7 @@ function MatchCard({ clubName, match }: { clubName: string; match: DashboardMatc
             </p>
 
             <h2 className="mt-1 text-lg font-semibold text-font-main">
-              {teams.home} vs {teams.away}
+              {teams.home.name} vs {teams.away.name}
             </h2>
 
             <p className="mt-1 text-sm text-font-secondary">{formatDate(match.starts_at)}</p>
@@ -94,18 +95,31 @@ function MatchCard({ clubName, match }: { clubName: string; match: DashboardMatc
             ) : null}
 
             {match.category ? <p className="mt-1 text-sm text-font-secondary">Categoría: {match.category}</p> : null}
-
-            {match.club_score !== null && match.opponent_score !== null ? (
-              <p className="mt-2 text-sm font-medium text-font-main">
-                Resultado: {teams.homeScore} - {teams.awayScore}
-              </p>
-            ) : null}
           </div>
 
           <div className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-font-secondary dark:bg-white/10">
-            {match.is_public ? "Público" : "Privado"}
+            Público
           </div>
         </div>
+
+        <div className="rounded-2xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-neutral-950">
+          <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+            <TeamBlock name={teams.home.name} label="Local" kitColor={teams.home.kitColor} />
+
+            <div className="flex items-center justify-center rounded-2xl bg-black/[0.03] px-5 py-4 dark:bg-white/[0.06]">
+              {teams.home.score !== null && teams.away.score !== null ? (
+                <p className="text-3xl font-bold text-font-main">
+                  {teams.home.score} - {teams.away.score}
+                </p>
+              ) : (
+                <p className="text-sm font-medium text-font-secondary">Sin marcador</p>
+              )}
+            </div>
+
+            <TeamBlock name={teams.away.name} label="Visita" kitColor={teams.away.kitColor} alignRight />
+          </div>
+        </div>
+
         <MatchKitColorForm match={match} />
         <MatchQuickUpdateForm match={match} />
       </div>
@@ -113,21 +127,74 @@ function MatchCard({ clubName, match }: { clubName: string; match: DashboardMatc
   );
 }
 
+function TeamBlock({
+  name,
+  label,
+  kitColor,
+  alignRight = false,
+}: {
+  name: string;
+  label: string;
+  kitColor: string | null;
+  alignRight?: boolean;
+}) {
+  return (
+    <div className={alignRight ? "flex items-center gap-3 sm:justify-end" : "flex items-center gap-3"}>
+      {!alignRight ? <KitColorDot color={kitColor} /> : null}
+
+      <div className={alignRight ? "text-left sm:text-right" : undefined}>
+        <p className="text-xs font-medium uppercase tracking-wide text-font-secondary">{label}</p>
+
+        <p className="mt-1 text-base font-semibold text-font-main">{name}</p>
+      </div>
+
+      {alignRight ? <KitColorDot color={kitColor} /> : null}
+    </div>
+  );
+}
+
+function KitColorDot({ color }: { color: string | null }) {
+  if (!color) {
+    return (
+      <span className="h-9 w-9 rounded-full border border-dashed border-black/30 bg-white dark:border-white/30 dark:bg-neutral-900" />
+    );
+  }
+
+  return (
+    <span
+      className="h-9 w-9 rounded-full border border-black/15 shadow-sm dark:border-white/20"
+      style={{ backgroundColor: color } as CSSProperties}
+    />
+  );
+}
+
 function getTeams({ clubName, match }: { clubName: string; match: DashboardMatchEvent }) {
   if (match.club_side === "away") {
     return {
-      home: match.opponent_name,
-      away: clubName,
-      homeScore: match.opponent_score,
-      awayScore: match.club_score,
+      home: {
+        name: match.opponent_name,
+        score: match.opponent_score,
+        kitColor: match.opponent_kit_color,
+      },
+      away: {
+        name: clubName,
+        score: match.club_score,
+        kitColor: match.club_kit_color,
+      },
     };
   }
 
   return {
-    home: clubName,
-    away: match.opponent_name,
-    homeScore: match.club_score,
-    awayScore: match.opponent_score,
+    home: {
+      name: clubName,
+      score: match.club_score,
+      kitColor: match.club_kit_color,
+    },
+    away: {
+      name: match.opponent_name,
+      score: match.opponent_score,
+      kitColor: match.opponent_kit_color,
+    },
   };
 }
 
