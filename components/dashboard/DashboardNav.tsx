@@ -11,6 +11,7 @@ const dashboardItems = [
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
   { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
   { href: "/dashboard/partidos", label: "Partidos", icon: Trophy },
+  { href: "/dashboard/eventos", label: "Eventos", icon: CalendarDays },
   { href: "/dashboard/socios", label: "Socios", icon: Users },
   { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText },
   { href: "/dashboard/plantel", label: "Plantel", icon: Building2 },
