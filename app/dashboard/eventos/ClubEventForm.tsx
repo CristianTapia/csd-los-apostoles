@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClubEventAction } from "@/server/actions/create-club-event";
 import type { ActionResult } from "@/server/actions/types";
 import { NON_MATCH_CLUB_EVENT_TYPES, NON_MATCH_CLUB_EVENT_TYPE_LABELS } from "@/server/schemas/club-event";
+import { DateTimeField } from "@/components/ui/form/DateTimeField";
 import { FormField, InfoBox, SelectInput, TextArea, TextInput } from "@/components/ui/form/FormField";
 import { FormSubmitButton } from "@/components/ui/form/FormSubmitButton";
 
@@ -17,6 +18,17 @@ const initialState: ActionResult = {
 export function ClubEventForm() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
+
+  const [startsAt, setStartsAt] = useState({
+    date: "",
+    time: "",
+  });
+
+  const [endsAt, setEndsAt] = useState({
+    date: "",
+    time: "",
+  });
+
   const [state, formAction] = useActionState(createClubEventAction, initialState);
 
   const fieldErrors = state.ok ? undefined : state.fieldErrors;
@@ -27,6 +39,8 @@ export function ClubEventForm() {
     if (state.ok) {
       toast.success(state.message);
       formRef.current?.reset();
+      setStartsAt({ date: "", time: "" });
+      setEndsAt({ date: "", time: "" });
       router.refresh();
       return;
     }
@@ -52,15 +66,25 @@ export function ClubEventForm() {
         </FormField>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <FormField htmlFor="starts_at" label="Inicio" error={fieldErrors?.starts_at?.[0]}>
-          <TextInput id="starts_at" name="starts_at" type="datetime-local" />
-        </FormField>
+      <DateTimeField
+        idPrefix="event-starts-at"
+        name="starts_at"
+        value={startsAt}
+        onChange={setStartsAt}
+        dateLabel="Fecha de inicio"
+        timeLabel="Hora de inicio"
+        error={fieldErrors?.starts_at?.[0]}
+      />
 
-        <FormField htmlFor="ends_at" label="Término opcional" error={fieldErrors?.ends_at?.[0]}>
-          <TextInput id="ends_at" name="ends_at" type="datetime-local" />
-        </FormField>
-      </div>
+      <DateTimeField
+        idPrefix="event-ends-at"
+        name="ends_at"
+        value={endsAt}
+        onChange={setEndsAt}
+        dateLabel="Fecha de término opcional"
+        timeLabel="Hora de término opcional"
+        error={fieldErrors?.ends_at?.[0]}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <FormField htmlFor="location" label="Lugar opcional" error={fieldErrors?.location?.[0]}>
