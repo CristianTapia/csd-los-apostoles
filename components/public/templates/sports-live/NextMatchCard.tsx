@@ -2,8 +2,8 @@ import { MapPin } from "lucide-react";
 import { PublicCard } from "@/components/public/PublicCard";
 import { CLUB_EVENT_STATUS_LABELS } from "@/server/schemas/calendar-event";
 import type { PublicCalendarEvent } from "@/server/queries/get-public-calendar-events";
-import { PublicKitColorDot, PublicTeamMark } from "./PublicTeamMark";
-import { formatDate, getMatchTeams, type SportsLiveTeam } from "./match-utils";
+import { PublicKitColorDot, PublicTeamMark } from "@/components/public/matches/PublicTeamMark";
+import { formatDate, getMatchTeams, type SportsLiveTeam } from "@/components/public/matches/match-utils";
 
 type NextMatchCardProps = {
   event: PublicCalendarEvent;

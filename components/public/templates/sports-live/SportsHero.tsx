@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PublicTeamMark } from "./PublicTeamMark";
+import { PublicTeamMark } from "@/components/public/matches/PublicTeamMark";
 
 type SportsHeroProps = {
   clubSlug: string;

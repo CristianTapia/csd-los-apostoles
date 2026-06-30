@@ -1,6 +1,6 @@
 import { PublicCard } from "@/components/public/PublicCard";
 import type { PublicCalendarEvent } from "@/server/queries/get-public-calendar-events";
-import { formatShortDate, getMatchTeams, getResultLabel } from "./match-utils";
+import { formatShortDate, getMatchTeams, getResultLabel } from "@/components/public/matches/match-utils";
 
 type RecentMatchCardProps = {
   event: PublicCalendarEvent;
