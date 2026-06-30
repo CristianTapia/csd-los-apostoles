@@ -1,5 +1,11 @@
 import { z } from "zod";
-import type { ClubEventStatus } from "@/server/schemas/calendar-event";
+import { CLUB_EVENT_STATUSES, type ClubEventStatus } from "@/server/schemas/calendar-event";
+import {
+  optionalDateTimeSchema,
+  optionalHttpUrlSchema,
+  optionalTextSchema,
+  requiredDateTimeSchema,
+} from "@/server/schemas/shared-fields";
 
 export const NON_MATCH_CLUB_EVENT_TYPES = ["training", "meeting", "fundraiser", "community", "other"] as const;
 
@@ -13,22 +19,6 @@ export const NON_MATCH_CLUB_EVENT_TYPE_LABELS: Record<NonMatchClubEventType, str
   other: "Otro",
 };
 
-const optionalText = z.preprocess((value) => {
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-}, z.string().nullable());
-
-const optionalUrl = z
-  .preprocess((value) => {
-    if (typeof value !== "string") return null;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }, z.string().nullable())
-  .refine((value) => value === null || isValidHttpUrl(value), {
-    message: "Ingresa un link válido que empiece con http:// o https://.",
-  });
-
 export const createClubEventSchema = z
   .object({
     title: z
@@ -37,24 +27,16 @@ export const createClubEventSchema = z
       .min(3, "El título debe tener al menos 3 caracteres.")
       .max(100, "El título no puede superar los 100 caracteres."),
     event_type: z.enum(NON_MATCH_CLUB_EVENT_TYPES),
-    starts_at: z
-      .string()
-      .min(1, "Selecciona fecha y hora de inicio.")
-      .refine((value) => !Number.isNaN(Date.parse(value)), {
-        message: "La fecha de inicio no es válida.",
-      }),
-    ends_at: z
-      .preprocess((value) => {
-        if (typeof value !== "string") return null;
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? trimmed : null;
-      }, z.string().nullable())
-      .refine((value) => value === null || !Number.isNaN(Date.parse(value)), {
-        message: "La fecha de término no es válida.",
-      }),
-    location: optionalText,
-    location_url: optionalUrl,
-    description: optionalText,
+    starts_at: requiredDateTimeSchema({
+      requiredMessage: "Selecciona fecha y hora de inicio.",
+      invalidMessage: "La fecha de inicio no es válida.",
+    }),
+    ends_at: optionalDateTimeSchema({
+      invalidMessage: "La fecha de término no es válida.",
+    }),
+    location: optionalTextSchema,
+    location_url: optionalHttpUrlSchema,
+    description: optionalTextSchema,
   })
   .superRefine((value, ctx) => {
     if (!value.ends_at) return;
@@ -75,7 +57,7 @@ export type CreateClubEventInput = z.infer<typeof createClubEventSchema>;
 
 export const updateClubEventStatusSchema = z.object({
   event_id: z.string().uuid(),
-  status: z.enum(["scheduled", "completed", "cancelled", "postponed"]),
+  status: z.enum(CLUB_EVENT_STATUSES),
 });
 
 export type UpdateClubEventStatusInput = z.infer<typeof updateClubEventStatusSchema>;
@@ -92,12 +74,3 @@ export type DashboardClubEvent = {
   location_url: string | null;
   is_public: boolean;
 };
-
-function isValidHttpUrl(value: string) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-}

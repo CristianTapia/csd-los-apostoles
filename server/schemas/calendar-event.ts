@@ -1,4 +1,11 @@
 import { z } from "zod";
+import {
+  optionalHexColorSchema,
+  optionalHttpUrlSchema,
+  optionalScoreSchema,
+  optionalTextSchema,
+  requiredDateTimeSchema,
+} from "@/server/schemas/shared-fields";
 
 export const CLUB_EVENT_TYPES = [
   "match",
@@ -41,70 +48,22 @@ export const CLUB_MATCH_SIDE_LABELS: Record<ClubMatchSide, string> = {
   neutral: "Neutral",
 };
 
-const optionalText = z.preprocess((value) => {
-  if (typeof value !== "string") return null;
-
-  const trimmed = value.trim();
-
-  return trimmed.length > 0 ? trimmed : null;
-}, z.string().nullable());
-
-const optionalUrl = z
-  .preprocess((value) => {
-    if (typeof value !== "string") return null;
-
-    const trimmed = value.trim();
-
-    return trimmed.length > 0 ? trimmed : null;
-  }, z.string().nullable())
-  .refine((value) => value === null || isValidHttpUrl(value), {
-    message: "Ingresa un link válido que empiece con http:// o https://.",
-  });
-
-const optionalScore = z.preprocess((value) => {
-  if (value === "" || value === null || value === undefined) {
-    return null;
-  }
-
-  return Number(value);
-}, z.number().int().min(0, "El marcador no puede ser negativo.").nullable());
-
-const optionalHexColor = z.preprocess(
-  (value) => {
-    if (value === "" || value === null || value === undefined) {
-      return null;
-    }
-
-    return value;
-  },
-  z
-    .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, "Selecciona un color válido.")
-    .nullable(),
-);
-
 export const createMatchEventSchema = z
   .object({
-    starts_at: z
-      .string()
-      .min(1, "Selecciona fecha y hora del partido.")
-      .refine((value) => !Number.isNaN(Date.parse(value)), {
-        message: "La fecha y hora no son válidas.",
-      }),
-
+    starts_at: requiredDateTimeSchema({
+      requiredMessage: "Selecciona fecha y hora del partido.",
+      invalidMessage: "La fecha y hora no son válidas.",
+    }),
     club_side: z.enum(CLUB_MATCH_SIDES),
-
     opponent_name: z
       .string()
       .trim()
       .min(2, "El rival debe tener al menos 2 caracteres.")
       .max(80, "El rival no puede superar los 80 caracteres."),
-
-    location: optionalText,
-    location_url: optionalUrl,
-
-    competition_name: optionalText,
-    category: optionalText,
+    location: optionalTextSchema,
+    location_url: optionalHttpUrlSchema,
+    competition_name: optionalTextSchema,
+    category: optionalTextSchema,
   })
   .superRefine((value, ctx) => {
     const today = new Date();
@@ -127,9 +86,8 @@ export const updateMatchDetailsSchema = z
   .object({
     event_id: z.string().uuid(),
     status: z.enum(CLUB_EVENT_STATUSES),
-
-    club_score: optionalScore,
-    opponent_score: optionalScore,
+    club_score: optionalScoreSchema,
+    opponent_score: optionalScoreSchema,
   })
   .superRefine((value, ctx) => {
     const hasClubScore = value.club_score !== null;
@@ -164,19 +122,8 @@ export type UpdateMatchDetailsInput = z.infer<typeof updateMatchDetailsSchema>;
 
 export const updateMatchKitColorsSchema = z.object({
   event_id: z.string().uuid(),
-
-  club_kit_color: optionalHexColor,
-  opponent_kit_color: optionalHexColor,
+  club_kit_color: optionalHexColorSchema,
+  opponent_kit_color: optionalHexColorSchema,
 });
 
 export type UpdateMatchKitColorsInput = z.infer<typeof updateMatchKitColorsSchema>;
-
-function isValidHttpUrl(value: string) {
-  try {
-    const url = new URL(value);
-
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
