@@ -1,9 +1,17 @@
+import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CLUB_EVENT_STATUS_LABELS, CLUB_EVENT_TYPE_LABELS } from "@/server/schemas/calendar-event";
 import { getDashboardCalendarEvents } from "@/server/queries/get-dashboard-calendar-events";
+import { requireDashboardModule } from "@/server/queries/get-active-dashboard-context";
 
 export default async function DashboardCalendarioPage() {
+  const moduleAccess = await requireDashboardModule("calendario");
+
+  if (!moduleAccess.ok) {
+    notFound();
+  }
+
   const result = await getDashboardCalendarEvents();
 
   if (!result.ok || !result.data) {

@@ -1,7 +1,15 @@
+import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { requireDashboardModule } from "@/server/queries/get-active-dashboard-context";
 
-export default function DashboardMembersPage() {
+export default async function DashboardMembersPage() {
+  const moduleAccess = await requireDashboardModule("socios");
+
+  if (!moduleAccess.ok) {
+    notFound();
+  }
+
   return (
     <div className="space-y-5">
       <PageHeader title="Socios" description="Base para miembros, estados y cuotas mensuales." />

@@ -66,6 +66,7 @@ export function SportsLiveHome({ club, settings, enabledModules, events }: Sport
 
   const hasSocios = enabledModules.some((item) => item.module === "socios");
   const hasCalendario = enabledModules.some((item) => item.module === "calendario");
+  const hasPartidos = enabledModules.some((item) => item.module === "partidos");
   const hasTransparencia = enabledModules.some((item) => item.module === "transparencia");
   const hasTienda = enabledModules.some((item) => item.module === "tienda");
 
@@ -123,6 +124,7 @@ export function SportsLiveHome({ club, settings, enabledModules, events }: Sport
             <QuickLinks
               clubSlug={club.slug}
               showCalendario={hasCalendario}
+              showPartidos={hasPartidos}
               showSocios={hasSocios}
               showTransparencia={hasTransparencia}
               showTienda={hasTienda}

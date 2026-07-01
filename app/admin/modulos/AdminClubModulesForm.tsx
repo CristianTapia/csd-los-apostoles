@@ -70,6 +70,7 @@ function getModuleDescription(module: string) {
     actividades: "Rifas, campañas y eventos comunitarios.",
     campeonatos: "Torneos, inscripciones y fixtures.",
     calendario: "Partidos, resultados y actividades programadas.",
+    partidos: "Fixture, resultados, historial y rendimiento deportivo del club.",
   };
 
   return descriptions[module] ?? "Módulo público del club.";

@@ -45,6 +45,12 @@ export default async function PublicMatchesPage({ params }: PublicMatchesPagePro
 
   const { club, settings, enabledModules } = pageResult.data;
 
+  const matchesModule = enabledModules.find((item) => item.module === "partidos");
+
+  if (!matchesModule) {
+    notFound();
+  }
+
   const eventsResult = await getPublicCalendarEvents(club.slug);
   const events = eventsResult.ok && eventsResult.data ? eventsResult.data.events : [];
 

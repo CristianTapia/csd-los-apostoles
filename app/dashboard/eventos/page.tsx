@@ -1,13 +1,21 @@
+import { notFound } from "next/navigation";
 import { MapPin } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CLUB_EVENT_STATUS_LABELS } from "@/server/schemas/calendar-event";
 import { NON_MATCH_CLUB_EVENT_TYPE_LABELS, type DashboardClubEvent } from "@/server/schemas/club-event";
+import { requireDashboardModule } from "@/server/queries/get-active-dashboard-context";
 import { getDashboardClubEvents } from "@/server/queries/get-dashboard-club-events";
 import { ClubEventForm } from "./ClubEventForm";
 import { EventStatusForm } from "./EventStatusForm";
 
 export default async function DashboardEventosPage() {
+  const moduleAccess = await requireDashboardModule("actividades");
+
+  if (!moduleAccess.ok) {
+    notFound();
+  }
+
   const result = await getDashboardClubEvents();
 
   if (!result.ok || !result.data) {

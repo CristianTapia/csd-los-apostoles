@@ -10,12 +10,20 @@ type QuickLink = {
 type QuickLinksProps = {
   clubSlug: string;
   showCalendario: boolean;
+  showPartidos: boolean;
   showSocios: boolean;
   showTransparencia: boolean;
   showTienda: boolean;
 };
 
-export function QuickLinks({ clubSlug, showCalendario, showSocios, showTransparencia, showTienda }: QuickLinksProps) {
+export function QuickLinks({
+  clubSlug,
+  showCalendario,
+  showPartidos,
+  showSocios,
+  showTransparencia,
+  showTienda,
+}: QuickLinksProps) {
   const links: QuickLink[] = [];
 
   if (showCalendario) {
@@ -23,6 +31,14 @@ export function QuickLinks({ clubSlug, showCalendario, showSocios, showTranspare
       href: `/${clubSlug}/calendario`,
       label: "Calendario",
       icon: CalendarDays,
+    });
+  }
+
+  if (showPartidos) {
+    links.push({
+      href: `/${clubSlug}/partidos`,
+      label: "Partidos",
+      icon: Trophy,
     });
   }
 

@@ -1,13 +1,21 @@
 import type { CSSProperties } from "react";
+import { notFound } from "next/navigation";
 import { MatchEventForm } from "./MatchEventForm";
 import { MatchKitColorForm } from "./MatchKitColorForm";
 import { MatchQuickUpdateForm } from "./MatchQuickUpdateForm";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CLUB_EVENT_STATUS_LABELS, CLUB_MATCH_SIDE_LABELS } from "@/server/schemas/calendar-event";
+import { requireDashboardModule } from "@/server/queries/get-active-dashboard-context";
 import { getDashboardMatchEvents, type DashboardMatchEvent } from "@/server/queries/get-dashboard-match-events";
 
 export default async function DashboardPartidosPage() {
+  const moduleAccess = await requireDashboardModule("partidos");
+
+  if (!moduleAccess.ok) {
+    notFound();
+  }
+
   const result = await getDashboardMatchEvents();
 
   if (!result.ok || !result.data) {

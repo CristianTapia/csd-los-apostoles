@@ -5,21 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Building2, CalendarDays, FileText, Home, Menu, Settings, Trophy, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import type { PublicClubModuleKey } from "@/server/queries/get-public-club-page";
 
 const dashboardItems = [
   { href: "/dashboard", label: "Inicio", icon: Home },
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
-  { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays },
-  { href: "/dashboard/partidos", label: "Partidos", icon: Trophy },
-  { href: "/dashboard/eventos", label: "Eventos", icon: CalendarDays },
-  { href: "/dashboard/socios", label: "Socios", icon: Users },
-  { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText },
-  { href: "/dashboard/plantel", label: "Plantel", icon: Building2 },
+  { href: "/dashboard/calendario", label: "Calendario", icon: CalendarDays, module: "calendario" },
+  { href: "/dashboard/partidos", label: "Partidos", icon: Trophy, module: "partidos" },
+  { href: "/dashboard/eventos", label: "Eventos", icon: CalendarDays, module: "actividades" },
+  { href: "/dashboard/socios", label: "Socios", icon: Users, module: "socios" },
+  { href: "/dashboard/transparencia", label: "Transparencia", icon: FileText, module: "transparencia" },
+  { href: "/dashboard/plantel", label: "Plantel", icon: Building2, module: "plantel" },
 ];
 
-export function DashboardNav() {
+type DashboardNavProps = {
+  modules: { module: PublicClubModuleKey }[];
+};
+
+export function DashboardNav({ modules }: DashboardNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const allowedModules = new Set<PublicClubModuleKey>(modules.map((item) => item.module));
+  const visibleItems = dashboardItems.filter((item) => !item.module || allowedModules.has(item.module as PublicClubModuleKey));
 
   return (
     <div className="border-b border-black/10 bg-white dark:border-white/10 dark:bg-neutral-950 lg:min-h-dvh lg:w-72 lg:border-b-0 lg:border-r">
@@ -47,7 +54,7 @@ export function DashboardNav() {
           open ? "max-h-96 pb-4" : "max-h-0 lg:pb-4",
         )}
       >
-        {dashboardItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
 

@@ -5,14 +5,14 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { PrivateShell } from "@/components/layouts/PrivateShell";
 import { Card } from "@/components/ui/Card";
-import { getAdminAccessContext } from "@/lib/permissions/server";
+import { getActiveDashboardContext } from "@/server/queries/get-active-dashboard-context";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const access = await getAdminAccessContext();
+  const context = await getActiveDashboardContext();
 
-  if (!access.configured) {
+  if (!context.ok && context.reason === "not_configured") {
     return (
       <main className="min-h-dvh bg-background px-4 py-8 text-font-main dark:bg-black dark:text-white">
         <div className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-xl items-center">
@@ -32,13 +32,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     );
   }
 
-  if (!access.userId) {
+  if (!context.ok && context.reason === "unauthenticated") {
     redirect("/auth/login?next=/dashboard");
   }
 
-  if (!access.canAccessDashboard) {
+  if (!context.ok) {
     return (
-      <PrivateShell nav={<DashboardNav />}>
+      <PrivateShell nav={<DashboardNav modules={[]} />}>
         <div className="mx-auto max-w-5xl space-y-5">
           <PageHeader title="Acceso denegado" description="Esta zona es solo para administradores del club." />
 
@@ -54,7 +54,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <PrivateShell nav={<DashboardNav />}>
+    <PrivateShell nav={<DashboardNav modules={context.data.modules} />}>
       <div className="mx-auto max-w-6xl space-y-5">
         <div className="flex justify-end">
           <LogoutButton />

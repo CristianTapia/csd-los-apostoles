@@ -3,14 +3,17 @@ import type { ActionResult } from "@/server/actions/types";
 
 export type PublicClubModuleKey =
   | "transparencia"
+  | "directiva"
   | "plantel"
   | "socios"
   | "tienda"
   | "actividades"
   | "campeonatos"
-  | "calendario";
+  | "calendario"
+  | "partidos";
 
 export type PublicClubModule = {
+  id: string;
   module: PublicClubModuleKey;
   label: string;
   href: string;
@@ -22,20 +25,33 @@ export type PublicClubPage = {
     id: string;
     name: string;
     slug: string;
-    status: string;
   };
   settings: {
     public_name: string;
+    logo_url: string | null;
+    cover_image_url: string | null;
     primary_color: string;
     secondary_color: string;
     accent_color: string;
-    logo_url: string | null;
-    cover_image_url: string | null;
   };
   enabledModules: PublicClubModule[];
 };
 
-export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<PublicClubPage>> {
+export type PublicClubPageData = PublicClubPage;
+
+const PUBLIC_MODULE_PATHS: Record<PublicClubModuleKey, string> = {
+  transparencia: "transparencia",
+  directiva: "directiva",
+  plantel: "plantel",
+  socios: "socios",
+  tienda: "tienda",
+  actividades: "actividades",
+  campeonatos: "campeonatos",
+  calendario: "calendario",
+  partidos: "partidos",
+};
+
+export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<PublicClubPageData>> {
   const supabase = await getSupabaseServerClient();
 
   if (!supabase) {
@@ -47,19 +63,12 @@ export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<
 
   const { data: club, error: clubError } = await supabase
     .from("clubs")
-    .select("id, name, slug, status")
+    .select("id, name, slug")
     .eq("slug", clubSlug)
     .eq("status", "active")
     .maybeSingle();
 
-  if (clubError) {
-    return {
-      ok: false,
-      message: "No se pudo obtener el club.",
-    };
-  }
-
-  if (!club) {
+  if (clubError || !club) {
     return {
       ok: false,
       message: "Club no encontrado.",
@@ -68,52 +77,43 @@ export async function getPublicClubPage(clubSlug: string): Promise<ActionResult<
 
   const { data: settings, error: settingsError } = await supabase
     .from("club_settings")
-    .select("public_name, primary_color, secondary_color, accent_color, logo_url, cover_image_url")
+    .select("public_name, logo_url, cover_image_url, primary_color, secondary_color, accent_color")
     .eq("club_id", club.id)
     .maybeSingle();
 
-  if (settingsError) {
+  if (settingsError || !settings) {
     return {
       ok: false,
-      message: "No se pudo obtener la configuración del club.",
+      message: "Configuración pública no encontrada.",
     };
   }
 
   const { data: modules, error: modulesError } = await supabase
     .from("club_modules")
-    .select("module, label, sort_order")
+    .select("id, module, label, sort_order")
     .eq("club_id", club.id)
     .eq("is_allowed", true)
-    // .eq("is_enabled", true)
     .order("sort_order", { ascending: true });
 
   if (modulesError) {
     return {
       ok: false,
-      message: "No se pudo obtener la navegación pública del club.",
+      message: "No se pudieron cargar los módulos públicos.",
     };
   }
-
-  const enabledModules: PublicClubModule[] = (modules ?? []).map((item) => ({
-    module: item.module as PublicClubModuleKey,
-    label: item.label,
-    href: `/${club.slug}/${item.module}`,
-    sort_order: item.sort_order,
-  }));
 
   return {
     ok: true,
     data: {
       club,
-      settings: {
-        public_name: settings?.public_name ?? club.name,
-        primary_color: settings?.primary_color ?? "#111827",
-        secondary_color: settings?.secondary_color ?? "#f9fafb",
-        accent_color: settings?.accent_color ?? "#22c55e",
-        logo_url: settings?.logo_url ?? null,
-        cover_image_url: settings?.cover_image_url ?? null,
-      },
-      enabledModules,
+      settings,
+      enabledModules: (modules ?? []).map((item) => ({
+        id: item.id,
+        module: item.module as PublicClubModuleKey,
+        label: item.label,
+        href: `/${club.slug}/${PUBLIC_MODULE_PATHS[item.module as PublicClubModuleKey]}`,
+        sort_order: item.sort_order,
+      })),
     },
   };
 }
